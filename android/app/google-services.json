@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "1094416488498",
+    "project_id": "fearless-1c4dc",
+    "storage_bucket": "fearless-1c4dc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1094416488498:android:dfe710bf3ff355e367442b",
+        "android_client_info": {
+          "package_name": "com.example.fearless"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1094416488498-lmh8qt4fo5dqukka81vihu9cj9g95d4o.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.fearless",
+            "certificate_hash": "3e4d851f1c02aa54bc0f25cf20339778799d546a"
+          }
+        },
+        {
+          "client_id": "1094416488498-lng0n31741qujj3jf945c8ukvpou58ua.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDF4FOs3mEWwczdI8ZoyQAdWmCMDQeWIng"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1094416488498-lng0n31741qujj3jf945c8ukvpou58ua.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1094416488498-d4v33pk3tkh012h9g38bm1ves7rk8117.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.flutterAuth"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
