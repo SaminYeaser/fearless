@@ -1,6 +1,6 @@
 # fearless
 
-A flutter project to ensure safety for women build by Wafa Shahed
+A flutter project to ensure safety for women build by Wafa Maliha Shahed
 
 ## Getting Started
 
