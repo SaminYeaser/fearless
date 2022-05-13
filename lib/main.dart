@@ -1,16 +1,32 @@
 import 'package:animated_splash_screen/animated_splash_screen.dart';
+import 'package:fearless/Screens/home/home_page.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:get/get.dart';
 import 'Screens/Welcome/components/body.dart';
 import 'constants.dart';
 
-void main() => runApp(MyApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
+  final storage = const FlutterSecureStorage();
+
+  Future<bool> checkLoginStatus() async{
+    String? value = await storage.read(key: 'uid');
+    if(value == null){
+      return false;
+    }
+    return true;
+  }
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Management System',
       theme: ThemeData(
@@ -21,7 +37,20 @@ class MyApp extends StatelessWidget {
       home: AnimatedSplashScreen(
         backgroundColor: kPrimaryLightColor,
         duration: 3000,
-          nextScreen: WelcomeScreen(),
+          nextScreen:  FutureBuilder(
+            future: checkLoginStatus(),
+            builder: (BuildContext context, AsyncSnapshot<bool>snapshot){
+              if(snapshot.data == false){
+                return WelcomeScreen();
+              }else{
+                return HomePage();
+              }
+              // if(snapshot.connectionState == ConnectionState.waiting){
+              //   return const Center(child: CircularProgressIndicator(),);
+              // }
+
+            },
+          ),
           splashTransition: SplashTransition.fadeTransition,
           // pageTransitionType: PageTransitionType.scale,
           splash: Center(
