@@ -26,9 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final LoginController _loginController = Get.put(LoginController());
   final _formkey = GlobalKey<FormState>();
 
-  final TextEditingController _textEditingControllerEmail = TextEditingController();
 
-  final TextEditingController _textEditingControllerPassword = TextEditingController();
 
   final auth = FirebaseAuth.instance;
   final storage = FlutterSecureStorage();
@@ -85,7 +83,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         }
                         return null;
                       },
-                      controller: _textEditingControllerEmail,
+                      controller: _loginController.textEditingControllerEmail.value,
                       keyboardType: TextInputType.emailAddress,
                       onChanged: (value) {},
                       cursorColor: kPrimaryColor,
@@ -134,7 +132,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           return 'Please Enter Valid Password(minimum: 8 character)';
                         }
                       },
-                      controller: _textEditingControllerPassword,
+                      controller: _loginController.textEditingControllerPassword.value,
                       onChanged: (value) {},
                       cursorColor: kPrimaryColor,
                       obscureText: true,
@@ -168,7 +166,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: RoundedButton(
                     text: "LOGIN",
                     press: () {
-                      _signIn(_textEditingControllerEmail.text, _textEditingControllerPassword.text);
+                      _signIn(_loginController.textEditingControllerEmail.value.text, _loginController.textEditingControllerPassword.value.text);
                     },
                   ),
                 ),

@@ -2,12 +2,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fearless/Screens/Welcome/components/body.dart';
 import 'package:fearless/Screens/home/article.dart';
 import 'package:fearless/constants.dart';
+import 'package:fearless/controllers/login/login_controller.dart';
 import 'package:fearless/model/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+
+import '../profile/profile.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -83,8 +86,10 @@ class _HomePageState extends State<HomePage>
           setState(() {
             if (id == 1) {
               currentPage = drawerSection.home;
+              Get.to(HomePage(),  transition: Transition.fade);
             } else if (id == 2) {
               currentPage = drawerSection.profile;
+              Get.to(Profile(), transition: Transition.fade);
             } else if (id == 3) {
               currentPage = drawerSection.emergency;
             }
@@ -119,7 +124,7 @@ class _HomePageState extends State<HomePage>
   User? user = FirebaseAuth.instance.currentUser;
   UserModel loggedInUserModel = UserModel();
   bool selected = false;
-
+  LoginController _loginController = Get.put(LoginController());
   @override
   void initState() {
     FirebaseFirestore.instance
@@ -128,8 +133,14 @@ class _HomePageState extends State<HomePage>
         .get()
         .then((value) {
       loggedInUserModel = UserModel.fromMap(value.data());
+      _loginController.textEditingControllerFirstName.value.text = loggedInUserModel.firstName!;
+      _loginController.textEditingControllerSecondName.value.text = loggedInUserModel.secondName!;
+      _loginController.textEditingControllerEmail.value.text = loggedInUserModel.email!;
+
       setState(() {});
     });
+
+
     _animationController =
         AnimationController(vsync: this, duration: Duration(seconds: 2));
     _animationController?.repeat(reverse: true);

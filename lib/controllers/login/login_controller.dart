@@ -5,6 +5,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 class LoginController extends GetxController{
   final auth = FirebaseAuth.instance;
 
+  final textEditingControllerEmail = TextEditingController().obs;
+  final textEditingControllerPassword = TextEditingController().obs;
+  final textEditingControllerFirstName = TextEditingController().obs;
+
+  final textEditingControllerSecondName = TextEditingController().obs;
+
+
    signIn(String email, String password) async{
      await auth.signInWithEmailAndPassword(email: email, password: password).then((uid){
       return uid;
