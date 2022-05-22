@@ -10,6 +10,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
+import '../emergency/emergency_page.dart';
 import '../profile/profile.dart';
 
 class HomePage extends StatefulWidget {
@@ -262,7 +263,7 @@ class _HomePageState extends State<HomePage>
                   ]),
               child: InkWell(
                 onTap: (){
-                  Fluttertoast.showToast(msg: 'Emergency Button Coming soon');
+                  Get.to(Emergency());
                 },
                 child: const Center(
                     child: Text(
