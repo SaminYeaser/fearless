@@ -1,27 +1,63 @@
+import 'dart:io';
+
 import 'package:fearless/Screens/home/home_page.dart';
 import 'package:fearless/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:get/get.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
+
 class Emergency extends StatefulWidget {
 
   @override
   State<Emergency> createState() => _EmergencyState();
 }
 
-class _EmergencyState extends State<Emergency> {
+class _EmergencyState extends State<Emergency> with SingleTickerProviderStateMixin {
   double? latitude;
 
   double? longitude;
 
   String? address;
 
+  Color? backGroundColor;
 
+  AnimationController? _controller;
+  Animation<Color>? animation;
 
+  final colors = <TweenSequenceItem<Color>>[
+    TweenSequenceItem(
+      weight: 1.0,
+      tween: Tween(begin: Colors.red, end: Colors.white),
+    ),
+    // TweenSequenceItem(
+    //   weight: 1.0,
+    //   tween: Tween(begin: Colors.blue, end: Colors.green),
+    // ),
+    // TweenSequenceItem(
+    //   weight: 1.0,
+    //   tween: Tween(begin: Colors.green, end: Colors.yellow),
+    // ),
+    // TweenSequenceItem(
+    //   weight: 1.0,
+    //   tween: Tween(begin: Colors.yellow, end: Colors.red),
+    // ),
+  ];
+
+  _backGroundChange(){
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+    animation = TweenSequence<Color>(colors).animate(_controller!)..addListener(() {
+      setState(() {});
+    });
+  }
 
   Future<Position> _determinePosition() async {
     bool serviceEnabled;
@@ -61,12 +97,23 @@ class _EmergencyState extends State<Emergency> {
   }
 
   _asyncMethod() async {
-    Position position = await _determinePosition();
-    latitude = position.latitude;
-    longitude = position.longitude;
-    Future.delayed(const Duration(milliseconds: 500), () {
-      getAddressFromLatLang(position);
-    });
+    try{
+      final result = await InternetAddress.lookup('www.google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        Position position = await _determinePosition();
+        latitude = position.latitude;
+        longitude = position.longitude;
+        Future.delayed(const Duration(milliseconds: 500), () {
+          getAddressFromLatLang(position);
+        });
+      }
+    }on SocketException catch (_) {
+      Fluttertoast.showToast(
+          msg: 'No Internet Connection, Please check your Internet',
+        timeInSecForIosWeb: 1
+      );
+    }
+
 
   }
 
@@ -78,6 +125,7 @@ class _EmergencyState extends State<Emergency> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: animation == null ? Colors.white : animation!.value,
       appBar: AppBar(
         titleSpacing: 0,
         title: Text('Emergency', style: TextStyle(
@@ -90,7 +138,7 @@ class _EmergencyState extends State<Emergency> {
           child: Column(
             children: [
               Text('Tap to Call', style: TextStyle(
-                  fontSize: 40, color: Colors.red, fontWeight: FontWeight.bold
+                  fontSize: 40, color:  animation == null ? Colors.red : Colors.black, fontWeight: FontWeight.bold
               ),),
               SizedBox(height: 20,),
               InkWell(
@@ -106,7 +154,7 @@ class _EmergencyState extends State<Emergency> {
                   // await _launchURL('999');
                 },
                 child: Text('999', style: TextStyle(
-                    fontSize: 100, color: Colors.red, fontWeight: FontWeight.bold
+                    fontSize: 100, color: animation == null ? Colors.red : Colors.black, fontWeight: FontWeight.bold
                 ),),
               ),
               // TextButton(
@@ -125,6 +173,15 @@ class _EmergencyState extends State<Emergency> {
                         splashFactory: InkRipple.splashFactory,
                         onTap: (){
 
+                          FlutterRingtonePlayer.play(
+                            fromAsset: 'assets/danger.wav',
+                            // android: AndroidSounds.ringtone,
+                            ios: IosSounds.alarm,
+                            looping: true,
+                            volume: 1.0,
+                              asAlarm: true
+                          );
+                          _backGroundChange();
                         },
                         child: Card(
                           child: Container(
@@ -185,7 +242,7 @@ class _EmergencyState extends State<Emergency> {
               ),),
               SizedBox(height: 20,),
               Text('${address == null ? '' : address}',textAlign: TextAlign.center,style: TextStyle(
-                  fontSize: 20, fontWeight: FontWeight.bold, color: Colors.red
+                  fontSize: 20, fontWeight: FontWeight.bold, color:  animation == null ? Colors.red : Colors.black
               ),)
             ],
           ),
