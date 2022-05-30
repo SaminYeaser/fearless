@@ -11,6 +11,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
 import '../emergency/emergency_page.dart';
+import '../post/add_post.dart';
 import '../profile/profile.dart';
 
 class HomePage extends StatefulWidget {
@@ -87,7 +88,7 @@ class _HomePageState extends State<HomePage>
           setState(() {
             if (id == 1) {
               currentPage = drawerSection.home;
-              Get.to(HomePage(),  transition: Transition.fade);
+              Get.to(HomePage(), transition: Transition.fade);
             } else if (id == 2) {
               currentPage = drawerSection.profile;
               Get.to(Profile(), transition: Transition.fade);
@@ -124,8 +125,11 @@ class _HomePageState extends State<HomePage>
   var currentPage = drawerSection.home;
   User? user = FirebaseAuth.instance.currentUser;
   UserModel loggedInUserModel = UserModel();
+  CollectionReference articleFirebase =
+      FirebaseFirestore.instance.collection('articles');
   bool selected = false;
   LoginController _loginController = Get.put(LoginController());
+
   @override
   void initState() {
     FirebaseFirestore.instance
@@ -134,13 +138,15 @@ class _HomePageState extends State<HomePage>
         .get()
         .then((value) {
       loggedInUserModel = UserModel.fromMap(value.data());
-      _loginController.textEditingControllerFirstName.value.text = loggedInUserModel.firstName!;
-      _loginController.textEditingControllerSecondName.value.text = loggedInUserModel.secondName!;
-      _loginController.textEditingControllerEmail.value.text = loggedInUserModel.email!;
+      _loginController.textEditingControllerFirstName.value.text =
+          loggedInUserModel.firstName!;
+      _loginController.textEditingControllerSecondName.value.text =
+          loggedInUserModel.secondName!;
+      _loginController.textEditingControllerEmail.value.text =
+          loggedInUserModel.email!;
 
       setState(() {});
     });
-
 
     _animationController =
         AnimationController(vsync: this, duration: Duration(seconds: 2));
@@ -262,7 +268,7 @@ class _HomePageState extends State<HomePage>
                         spreadRadius: _animation?.value)
                   ]),
               child: InkWell(
-                onTap: (){
+                onTap: () {
                   Get.to(Emergency());
                 },
                 child: const Center(
@@ -277,49 +283,65 @@ class _HomePageState extends State<HomePage>
             height: 30,
           ),
           Expanded(
-            child: ListView.builder(
-                physics: AlwaysScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: articles.length,
-                itemBuilder: (context, index) {
-                  return InkWell(
-                    onTap: () {
-                      Get.to(Articles(
-                        name: articles[index]['name'],
-                        article: articles[index]['article'],
-                        date: articles[index]['date'],
-                      ));
-                    },
-                    child: Card(
-                      elevation: 5,
-                      child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Container(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                articles[index]['name'],
-                                style: const TextStyle(
-                                    fontSize: 14, color: Colors.black),
+            child: FutureBuilder<DocumentSnapshot>(
+                future: articleFirebase.doc('uid').get(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return Text("Something went wrong");
+                  }
+                  else if (snapshot.hasData && !snapshot.data!.exists) {
+                    return Text("Document does not exist");
+                  }
+                  else{
+                    Map<String, dynamic> data =
+                        snapshot.data!.data() as Map<String, dynamic>;
+                    return ListView.builder(
+                        physics: AlwaysScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: articles.length,
+                        itemBuilder: (context, index) {
+                          return InkWell(
+                            onTap: () {
+                              Get.to(Articles(
+                                name: articles[index]['name'],
+                                article: articles[index]['article'],
+                                date: articles[index]['date'],
+                              ));
+                            },
+                            child: Card(
+                              elevation: 5,
+                              child: Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: Container(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        data['firstname'],
+                                        style: const TextStyle(
+                                            fontSize: 14, color: Colors.black),
+                                      ),
+                                      Text(
+                                        data['firstname'],
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.grey[500]),
+                                      ),
+                                      Text(
+                                        data['firstname'],
+                                        maxLines: 1,
+                                        style: const TextStyle(
+                                            fontSize: 14, color: Colors.black),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
-                              Text(
-                                articles[index]['date'],
-                                style: TextStyle(
-                                    fontSize: 12, color: Colors.grey[500]),
-                              ),
-                              Text(
-                                articles[index]['article'],
-                                maxLines: 1,
-                                style: const TextStyle(
-                                    fontSize: 14, color: Colors.black),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
+                            ),
+                          );
+                        });
+                  }
                 }),
           )
         ],
@@ -329,7 +351,7 @@ class _HomePageState extends State<HomePage>
         backgroundColor: kPrimaryColor,
         child: Icon(Icons.add),
         onPressed: () {
-          Fluttertoast.showToast(msg: 'Add Post Coming soon');
+          Get.to(AddPost());
         },
       ),
     );
