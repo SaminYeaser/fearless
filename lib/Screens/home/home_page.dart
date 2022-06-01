@@ -1,17 +1,23 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fearless/Screens/Welcome/components/body.dart';
 import 'package:fearless/Screens/home/article.dart';
 import 'package:fearless/constants.dart';
 import 'package:fearless/controllers/login/login_controller.dart';
+import 'package:fearless/model/article.dart';
 import 'package:fearless/model/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 import '../emergency/emergency_page.dart';
 import '../post/add_post.dart';
+import '../post/post_view.dart';
 import '../profile/profile.dart';
 
 class HomePage extends StatefulWidget {
@@ -23,56 +29,56 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
-  List<Map> articles = [
-    {
-      'name': 'Wafa Maliha',
-      'article':
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-      'date': '12th May, 2022'
-    },
-    {
-      'name': 'Inzamam Khan',
-      'article':
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-      'date': '13th May, 2022'
-    },
-    {
-      'name': 'Tazrin Samiha',
-      'article':
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-      'date': '13th June, 2022'
-    },
-    {
-      'name': 'Bolod Khan Maliha',
-      'article':
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-      'date': '30th February, 2022'
-    },
-    {
-      'name': 'Wafa Maliha',
-      'article':
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-      'date': '12th May, 2022'
-    },
-    {
-      'name': 'Inzamam Khan',
-      'article':
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-      'date': '13th May, 2022'
-    },
-    {
-      'name': 'Tazrin Samiha',
-      'article':
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-      'date': '13th June, 2022'
-    },
-    {
-      'name': 'Bolod Khan Maliha',
-      'article':
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-      'date': '30th February, 2022'
-    }
-  ];
+  // List<Map> articles = [
+  //   {
+  //     'name': 'Wafa Maliha',
+  //     'article':
+  //         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+  //     'date': '12th May, 2022'
+  //   },
+  //   {
+  //     'name': 'Inzamam Khan',
+  //     'article':
+  //         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+  //     'date': '13th May, 2022'
+  //   },
+  //   {
+  //     'name': 'Tazrin Samiha',
+  //     'article':
+  //         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+  //     'date': '13th June, 2022'
+  //   },
+  //   {
+  //     'name': 'Bolod Khan Maliha',
+  //     'article':
+  //         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+  //     'date': '30th February, 2022'
+  //   },
+  //   {
+  //     'name': 'Wafa Maliha',
+  //     'article':
+  //         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+  //     'date': '12th May, 2022'
+  //   },
+  //   {
+  //     'name': 'Inzamam Khan',
+  //     'article':
+  //         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+  //     'date': '13th May, 2022'
+  //   },
+  //   {
+  //     'name': 'Tazrin Samiha',
+  //     'article':
+  //         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+  //     'date': '13th June, 2022'
+  //   },
+  //   {
+  //     'name': 'Bolod Khan Maliha',
+  //     'article':
+  //         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+  //     'date': '30th February, 2022'
+  //   }
+  // ];
 
   Widget? menuItem(
     String name,
@@ -125,13 +131,17 @@ class _HomePageState extends State<HomePage>
   var currentPage = drawerSection.home;
   User? user = FirebaseAuth.instance.currentUser;
   UserModel loggedInUserModel = UserModel();
-  CollectionReference articleFirebase =
-      FirebaseFirestore.instance.collection('articles');
+
+   DatabaseReference? _databaseReference;
+  // Articles? data;
+  String? database;
   bool selected = false;
   LoginController _loginController = Get.put(LoginController());
 
+
   @override
   void initState() {
+     _databaseReference = FirebaseDatabase.instance.ref().child('articles');
     FirebaseFirestore.instance
         .collection('users')
         .doc(user?.uid)
@@ -158,6 +168,10 @@ class _HomePageState extends State<HomePage>
     super.initState();
   }
 
+  // Future<dynamic> getData() async{
+  //   _databaseReference = FirebaseDatabase.instance.ref();
+  //   return await _databaseReference.child('fearless').get();
+  // }
   @override
   void dispose() {
     _animationController?.dispose();
@@ -283,67 +297,108 @@ class _HomePageState extends State<HomePage>
             height: 30,
           ),
           Expanded(
-            child: FutureBuilder<DocumentSnapshot>(
-                future: articleFirebase.doc('uid').get(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    return Text("Something went wrong");
-                  }
-                  else if (snapshot.hasData && !snapshot.data!.exists) {
-                    return Text("Document does not exist");
-                  }
-                  else{
-                    Map<String, dynamic> data =
-                        snapshot.data!.data() as Map<String, dynamic>;
-                    return ListView.builder(
-                        physics: AlwaysScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: articles.length,
-                        itemBuilder: (context, index) {
-                          return InkWell(
-                            onTap: () {
-                              Get.to(Articles(
-                                name: articles[index]['name'],
-                                article: articles[index]['article'],
-                                date: articles[index]['date'],
-                              ));
-                            },
-                            child: Card(
-                              elevation: 5,
-                              child: Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Container(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        data['firstname'],
-                                        style: const TextStyle(
-                                            fontSize: 14, color: Colors.black),
-                                      ),
-                                      Text(
-                                        data['firstname'],
-                                        style: TextStyle(
-                                            fontSize: 12,
-                                            color: Colors.grey[500]),
-                                      ),
-                                      Text(
-                                        data['firstname'],
-                                        maxLines: 1,
-                                        style: const TextStyle(
-                                            fontSize: 14, color: Colors.black),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        });
-                  }
-                }),
+            child: FirebaseAnimatedList(
+              query: _databaseReference!,
+              shrinkWrap: true,
+              itemBuilder: (BuildContext context,DataSnapshot snapshot,animation,index){
+                return  InkWell(
+                  onTap: (){
+                    Get.to(PostView(
+                      firstName: (snapshot.value as dynamic)['firstname'],
+                      date: (snapshot.value as dynamic)['date'],
+                      story: (snapshot.value as dynamic)['story'],
+                    ));
+                  },
+                  child: Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ListTile(
+                        title: Text((snapshot.value as dynamic)['firstname'] ?? '',style: TextStyle(
+                          fontSize: 16,color: Colors.black
+                        ),),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text((snapshot.value as dynamic)['story'] ?? '',style: TextStyle(
+                                fontSize: 12,color: Colors.grey[600]
+                            ),),
+                            Text((snapshot.value as dynamic)['date'],style: TextStyle(
+                                fontSize: 10,color: Colors.grey[400]
+                            ),),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+                // Text((snapshot.value as dynamic)['story'])
+              },
+            ),
           )
+          // Expanded(
+          //   child: FutureBuilder<dynamic>(
+          //       future: getData(),
+          //       builder: (context, snapshot) {
+          //         if (snapshot.hasError) {
+          //           return Text("Something went wrong");
+          //         }
+          //         else if (snapshot.hasData) {
+          //           print('snapshot ${snapshot}');
+          //           return Text("Document does not exist");
+          //         }
+          //         else{
+          //           // Map<String, dynamic> data =
+          //           //     snapshot.data! as Map<String, dynamic>;
+          //           print('data $snapshot}');
+          //           return ListView.builder(
+          //               physics: AlwaysScrollableScrollPhysics(),
+          //               shrinkWrap: true,
+          //               itemCount: 5,
+          //               itemBuilder: (context, index) {
+          //                 return InkWell(
+          //                   onTap: () {
+          //                     // Get.to(Articles(
+          //                     //   name: articles[index]['name'],
+          //                     //   article: articles[index]['article'],
+          //                     //   date: articles[index]['date'],
+          //                     // ));
+          //                   },
+          //                   child: Card(
+          //                     elevation: 5,
+          //                     child: Padding(
+          //                       padding: const EdgeInsets.all(10.0),
+          //                       child: Container(
+          //                         child: Column(
+          //                           crossAxisAlignment:
+          //                               CrossAxisAlignment.start,
+          //                           children: [
+          //                             Text(
+          //                               '',
+          //                               style: const TextStyle(
+          //                                   fontSize: 14, color: Colors.black),
+          //                             ),
+          //                             Text(
+          //                               '',
+          //                               style: TextStyle(
+          //                                   fontSize: 12,
+          //                                   color: Colors.grey[500]),
+          //                             ),
+          //                             Text(
+          //                               '',
+          //                               maxLines: 1,
+          //                               style: const TextStyle(
+          //                                   fontSize: 14, color: Colors.black),
+          //                             ),
+          //                           ],
+          //                         ),
+          //                       ),
+          //                     ),
+          //                   ),
+          //                 );
+          //               });
+          //         }
+          //       }),
+          // )
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,

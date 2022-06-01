@@ -1,33 +1,28 @@
-class ArticleModel{
-  String? article;
-  String? firstName;
-  String? secondName;
-  String? uid;
-  DateTime? dateTime;
-  ArticleModel({
-    this.article,
-    this.firstName,
-    this.secondName,
-    this.uid,
-    this.dateTime
-  });
-  factory ArticleModel.fromMap(map){
-    return ArticleModel(
-        uid: map['uid'],
-        firstName: map['firstName'],
-        secondName: map['secondName'],
-        article: map['article'],
-        dateTime: map['date']
-    );
-  }
+import 'dart:convert';
 
-  Map<String,dynamic> toMap(){
-    return{
-      'uid':uid,
-      'firstName':firstName,
-      'secondName':secondName,
-      'article':article,
-      'date':dateTime
-    };
-  }
+ArticlesModel articlesFromJson(String str) => ArticlesModel.fromJson(json.decode(str));
+
+String articlesToJson(ArticlesModel data) => json.encode(data.toJson());
+class ArticlesModel {
+  ArticlesModel({
+    this.article,
+    this.firstname,
+    this.lastname,
+  });
+
+  String? article;
+  String? firstname;
+  String? lastname;
+
+  factory ArticlesModel.fromJson(Map<String, dynamic> json) => ArticlesModel(
+    article: json["article"],
+    firstname: json["firstname"],
+    lastname: json["lastname"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "article": article,
+    "firstname": firstname,
+    "lastname": lastname,
+  };
 }

@@ -30,23 +30,19 @@ class _EmergencyState extends State<Emergency> with SingleTickerProviderStateMix
   AnimationController? _controller;
   Animation<Color>? animation;
 
+  int ringtone = 0;
+
   final colors = <TweenSequenceItem<Color>>[
     TweenSequenceItem(
       weight: 1.0,
       tween: Tween(begin: Colors.red, end: Colors.white),
     ),
-    // TweenSequenceItem(
-    //   weight: 1.0,
-    //   tween: Tween(begin: Colors.blue, end: Colors.green),
-    // ),
-    // TweenSequenceItem(
-    //   weight: 1.0,
-    //   tween: Tween(begin: Colors.green, end: Colors.yellow),
-    // ),
-    // TweenSequenceItem(
-    //   weight: 1.0,
-    //   tween: Tween(begin: Colors.yellow, end: Colors.red),
-    // ),
+  ];
+  final normal = <TweenSequenceItem<Color>>[
+    TweenSequenceItem(
+      weight: 1.0,
+      tween: Tween(begin: Colors.white, end: Colors.white),
+    ),
   ];
 
   _backGroundChange(){
@@ -55,6 +51,15 @@ class _EmergencyState extends State<Emergency> with SingleTickerProviderStateMix
       vsync: this,
     );
     animation = TweenSequence<Color>(colors).animate(_controller!)..addListener(() {
+      setState(() {});
+    });
+  }
+  _backGroundChangeToNormal(){
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+    animation = TweenSequence<Color>(normal).animate(_controller!)..addListener(() {
       setState(() {});
     });
   }
@@ -168,10 +173,14 @@ class _EmergencyState extends State<Emergency> with SingleTickerProviderStateMix
                 padding: const EdgeInsets.symmetric(horizontal: 10.0),
                 child: Row(
                   children: [
+                    ringtone == 0 ?
                     Expanded(
                       child: InkWell(
                         splashFactory: InkRipple.splashFactory,
                         onTap: (){
+                          setState(() {
+                            ringtone = 1;
+                          });
 
                           FlutterRingtonePlayer.play(
                             fromAsset: 'assets/danger.wav',
@@ -181,7 +190,7 @@ class _EmergencyState extends State<Emergency> with SingleTickerProviderStateMix
                             volume: 1.0,
                               asAlarm: true
                           );
-                          _backGroundChange();
+                          // _backGroundChange();
                         },
                         child: Card(
                           child: Container(
@@ -196,6 +205,33 @@ class _EmergencyState extends State<Emergency> with SingleTickerProviderStateMix
                                color: Colors.white, fontSize: 20
                              ),),
                            )
+                          ),
+                        ),
+                      ),
+                    ) : Expanded(
+                      child: InkWell(
+                        splashFactory: InkRipple.splashFactory,
+                        onTap: (){
+                          setState(() {
+                            ringtone = 0;
+                          });
+
+                          FlutterRingtonePlayer.stop();
+                          // _backGroundChangeToNormal();
+                        },
+                        child: Card(
+                          child: Container(
+                              height: 100,
+                              width: 100,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(6),
+                                  color: kPrimaryColor
+                              ),
+                              child: Center(
+                                child: Text('Alarm off',style: TextStyle(
+                                    color: Colors.white, fontSize: 20
+                                ),),
+                              )
                           ),
                         ),
                       ),
