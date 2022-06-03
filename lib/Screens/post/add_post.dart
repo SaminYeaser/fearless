@@ -1,6 +1,7 @@
 import 'package:fearless/controllers/login/login_controller.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
@@ -16,7 +17,7 @@ class AddPost extends StatefulWidget {
 class _AddPostState extends State<AddPost> {
   final _formKey = GlobalKey<FormState>();
   DatabaseReference ref = FirebaseDatabase.instance.ref();
-  final TextEditingController _articleController = TextEditingController();
+  // final TextEditingController _articleController = TextEditingController();
   LoginController _loginController = Get.find();
 
 
@@ -45,10 +46,13 @@ class _AddPostState extends State<AddPost> {
               .set({
             'firstname': _loginController.textEditingControllerFirstName.value.text,
             'secondname':_loginController.textEditingControllerSecondName.value.text,
-            'story': _articleController.text,
-            'date': DateFormat.yMMMd().format(DateTime.now())
+            'story': _loginController.articleController.value.text,
+            'date': DateFormat.yMMMd().format(DateTime.now()),
+            'mail':_loginController.textEditingControllerEmail.value.text
               }).asStream();
-          _articleController.clear();
+          _loginController.articleController.value.clear();
+          Fluttertoast.showToast(msg: 'Article Added');
+          Get.back();
         },
         backgroundColor: kPrimaryColor,
       ),
@@ -76,7 +80,7 @@ class _AddPostState extends State<AddPost> {
                         return 'Article more than 50 character are Required';
                       }
                     },
-                    controller: _articleController,
+                    controller: _loginController.articleController.value,
                     keyboardType: TextInputType.emailAddress,
                     onChanged: (value) {},
                     maxLines: 99999 ,

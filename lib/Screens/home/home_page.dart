@@ -76,7 +76,7 @@ class _HomePageState extends State<HomePage>
   User? user = FirebaseAuth.instance.currentUser;
   UserModel loggedInUserModel = UserModel();
 
-  DatabaseReference? _databaseReference;
+  // DatabaseReference? _databaseReference;
 
   // Articles? data;
   String? database;
@@ -86,7 +86,7 @@ class _HomePageState extends State<HomePage>
 
   @override
   void initState() {
-    _databaseReference = FirebaseDatabase.instance.ref().child('articles');
+    // _databaseReference = FirebaseDatabase.instance.ref().child('articles');
     FirebaseFirestore.instance
         .collection('users')
         .doc(user?.uid)
@@ -132,71 +132,6 @@ class _HomePageState extends State<HomePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // drawer: Drawer(
-      //   // backgroundColor: kPrimaryLightColor,
-      //   child: SafeArea(
-      //     child: Padding(
-      //       padding: const EdgeInsets.symmetric(horizontal: 10.0),
-      //       child: Column(
-      //         children: [
-      //           const SizedBox(
-      //             height: 200,
-      //           ),
-      //           menuItem(
-      //             'Home',
-      //             Icons.home,
-      //             1,
-      //             currentPage == drawerSection.home ? true : false,
-      //           )!,
-      //           menuItem(
-      //             'Profile',
-      //             Icons.person,
-      //             2,
-      //             currentPage == drawerSection.profile ? true : false,
-      //           )!,
-      //           menuItem(
-      //             'Emergency',
-      //             Icons.help,
-      //             3,
-      //             currentPage == drawerSection.emergency ? true : false,
-      //           )!,
-      //           Material(
-      //             color: selected ? Colors.grey[300] : Colors.transparent,
-      //             child: InkWell(
-      //               onTap: () async {
-      //                 Navigator.pop(context);
-      //                 FirebaseAuth.instance.signOut();
-      //                 await storage.delete(key: 'uid');
-      //                 Get.off(WelcomeScreen());
-      //               },
-      //               child: Container(
-      //                 height: 40,
-      //                 child: Row(
-      //                   children: const [
-      //                     Expanded(
-      //                         child: Icon(
-      //                           Icons.logout,
-      //                           color: kPrimaryColor,
-      //                           size: 16,
-      //                         )),
-      //                     SizedBox(width: 30),
-      //                     Expanded(
-      //                       flex: 2,
-      //                       child: Text(
-      //                         'Logout',
-      //                         style: TextStyle(fontSize: 16),
-      //                       ),
-      //                     )
-      //                   ],
-      //                 ),
-      //               ),
-      //             ),
-      //           )
-      //         ],
-      //       ),
-      //     ),
-      //   ),
-      // ),
       appBar: AppBar(
         backgroundColor: kPrimaryColor,
         // automaticallyImplyLeading: false,
@@ -237,7 +172,8 @@ class _HomePageState extends State<HomePage>
           ),
           Expanded(
             child: FirebaseAnimatedList(
-              query: _databaseReference!,
+              // reverse: true,
+              query: _loginController.databaseReference.value,
               shrinkWrap: true,
               itemBuilder: (BuildContext context, DataSnapshot snapshot,
                   animation, index) {
@@ -261,12 +197,14 @@ class _HomePageState extends State<HomePage>
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text((snapshot.value as dynamic)['story'] ?? '',
+                              maxLines: 2,
                               style: TextStyle(
                                   fontSize: 12, color: Colors.grey[600]
                               ),),
+                            SizedBox(height: 5),
                             Text((snapshot.value as dynamic)['date'],
                               style: TextStyle(
-                                  fontSize: 10, color: Colors.grey[400]
+                                  fontSize: 12, color: Colors.grey[700]
                               ),),
                           ],
                         ),
@@ -278,70 +216,7 @@ class _HomePageState extends State<HomePage>
               },
             ),
           )
-          // Expanded(
-          //   child: FutureBuilder<dynamic>(
-          //       future: getData(),
-          //       builder: (context, snapshot) {
-          //         if (snapshot.hasError) {
-          //           return Text("Something went wrong");
-          //         }
-          //         else if (snapshot.hasData) {
-          //           print('snapshot ${snapshot}');
-          //           return Text("Document does not exist");
-          //         }
-          //         else{
-          //           // Map<String, dynamic> data =
-          //           //     snapshot.data! as Map<String, dynamic>;
-          //           print('data $snapshot}');
-          //           return ListView.builder(
-          //               physics: AlwaysScrollableScrollPhysics(),
-          //               shrinkWrap: true,
-          //               itemCount: 5,
-          //               itemBuilder: (context, index) {
-          //                 return InkWell(
-          //                   onTap: () {
-          //                     // Get.to(Articles(
-          //                     //   name: articles[index]['name'],
-          //                     //   article: articles[index]['article'],
-          //                     //   date: articles[index]['date'],
-          //                     // ));
-          //                   },
-          //                   child: Card(
-          //                     elevation: 5,
-          //                     child: Padding(
-          //                       padding: const EdgeInsets.all(10.0),
-          //                       child: Container(
-          //                         child: Column(
-          //                           crossAxisAlignment:
-          //                               CrossAxisAlignment.start,
-          //                           children: [
-          //                             Text(
-          //                               '',
-          //                               style: const TextStyle(
-          //                                   fontSize: 14, color: Colors.black),
-          //                             ),
-          //                             Text(
-          //                               '',
-          //                               style: TextStyle(
-          //                                   fontSize: 12,
-          //                                   color: Colors.grey[500]),
-          //                             ),
-          //                             Text(
-          //                               '',
-          //                               maxLines: 1,
-          //                               style: const TextStyle(
-          //                                   fontSize: 14, color: Colors.black),
-          //                             ),
-          //                           ],
-          //                         ),
-          //                       ),
-          //                     ),
-          //                   ),
-          //                 );
-          //               });
-          //         }
-          //       }),
-          // )
+
         ],
       ),
 

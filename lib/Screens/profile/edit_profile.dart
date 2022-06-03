@@ -3,6 +3,7 @@ import 'package:fearless/controllers/login/login_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import '../../constants.dart';
 
@@ -133,6 +134,7 @@ class EditProfile extends StatelessWidget {
                         'email':'${_loginController.textEditingControllerEmail.value.text}',
                         'SecondName':'${_loginController.textEditingControllerSecondName.value.text}',
                       });
+                      Fluttertoast.showToast(msg: 'Profile Updated');
                       Get.back();
                     },
                     child: Container(
