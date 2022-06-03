@@ -1,21 +1,17 @@
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fearless/Screens/Welcome/components/body.dart';
-import 'package:fearless/Screens/home/article.dart';
 import 'package:fearless/constants.dart';
 import 'package:fearless/controllers/login/login_controller.dart';
-import 'package:fearless/model/article.dart';
 import 'package:fearless/model/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 
 import '../emergency/emergency_page.dart';
+import '../helpline/helpline.dart';
 import '../post/add_post.dart';
 import '../post/post_view.dart';
 import '../profile/profile.dart';
@@ -29,110 +25,59 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
-  // List<Map> articles = [
-  //   {
-  //     'name': 'Wafa Maliha',
-  //     'article':
-  //         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-  //     'date': '12th May, 2022'
-  //   },
-  //   {
-  //     'name': 'Inzamam Khan',
-  //     'article':
-  //         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-  //     'date': '13th May, 2022'
-  //   },
-  //   {
-  //     'name': 'Tazrin Samiha',
-  //     'article':
-  //         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-  //     'date': '13th June, 2022'
-  //   },
-  //   {
-  //     'name': 'Bolod Khan Maliha',
-  //     'article':
-  //         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-  //     'date': '30th February, 2022'
-  //   },
-  //   {
-  //     'name': 'Wafa Maliha',
-  //     'article':
-  //         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-  //     'date': '12th May, 2022'
-  //   },
-  //   {
-  //     'name': 'Inzamam Khan',
-  //     'article':
-  //         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-  //     'date': '13th May, 2022'
-  //   },
-  //   {
-  //     'name': 'Tazrin Samiha',
-  //     'article':
-  //         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-  //     'date': '13th June, 2022'
-  //   },
-  //   {
-  //     'name': 'Bolod Khan Maliha',
-  //     'article':
-  //         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-  //     'date': '30th February, 2022'
-  //   }
-  // ];
 
-  Widget? menuItem(
-    String name,
-    IconData icon,
-    int id,
-    bool selected,
-  ) {
-    return Material(
-      color: selected ? Colors.grey[300] : Colors.transparent,
-      child: InkWell(
-        onTap: () {
-          Navigator.pop(context);
-          setState(() {
-            if (id == 1) {
-              currentPage = drawerSection.home;
-              Get.to(HomePage(), transition: Transition.fade);
-            } else if (id == 2) {
-              currentPage = drawerSection.profile;
-              Get.to(Profile(), transition: Transition.fade);
-            } else if (id == 3) {
-              currentPage = drawerSection.emergency;
-            }
-          });
-        },
-        child: Container(
-          height: 40,
-          child: Row(
-            children: [
-              Expanded(
-                  child: Icon(
-                icon,
-                color: kPrimaryColor,
-                size: 16,
-              )),
-              const SizedBox(width: 30),
-              Expanded(
-                flex: 2,
-                child: Text(
-                  name,
-                  style: const TextStyle(fontSize: 16),
-                ),
-              )
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+  // Widget? menuItem(String name,
+  //     IconData icon,
+  //     int id,
+  //     bool selected,) {
+  //   return Material(
+  //     color: selected ? Colors.grey[300] : Colors.transparent,
+  //     child: InkWell(
+  //       onTap: () {
+  //         Navigator.pop(context);
+  //         setState(() {
+  //           if (id == 1) {
+  //             currentPage = drawerSection.home;
+  //             Get.to(HomePage(), transition: Transition.fade);
+  //           } else if (id == 2) {
+  //             currentPage = drawerSection.profile;
+  //             Get.to(Profile(), transition: Transition.fade);
+  //           } else if (id == 3) {
+  //             currentPage = drawerSection.emergency;
+  //           }
+  //         });
+  //       },
+  //       child: Container(
+  //         height: 40,
+  //         child: Row(
+  //           children: [
+  //             Expanded(
+  //                 child: Icon(
+  //                   icon,
+  //                   color: kPrimaryColor,
+  //                   size: 16,
+  //                 )),
+  //             const SizedBox(width: 30),
+  //             Expanded(
+  //               flex: 2,
+  //               child: Text(
+  //                 name,
+  //                 style: const TextStyle(fontSize: 16),
+  //               ),
+  //             )
+  //           ],
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
-  var currentPage = drawerSection.home;
+  // var currentPage = drawerSection.home;
   User? user = FirebaseAuth.instance.currentUser;
   UserModel loggedInUserModel = UserModel();
 
-   DatabaseReference? _databaseReference;
+  DatabaseReference? _databaseReference;
+
   // Articles? data;
   String? database;
   bool selected = false;
@@ -141,7 +86,7 @@ class _HomePageState extends State<HomePage>
 
   @override
   void initState() {
-     _databaseReference = FirebaseDatabase.instance.ref().child('articles');
+    _databaseReference = FirebaseDatabase.instance.ref().child('articles');
     FirebaseFirestore.instance
         .collection('users')
         .doc(user?.uid)
@@ -149,11 +94,11 @@ class _HomePageState extends State<HomePage>
         .then((value) {
       loggedInUserModel = UserModel.fromMap(value.data());
       _loginController.textEditingControllerFirstName.value.text =
-          loggedInUserModel.firstName!;
+      loggedInUserModel.firstName!;
       _loginController.textEditingControllerSecondName.value.text =
-          loggedInUserModel.secondName!;
+      loggedInUserModel.secondName!;
       _loginController.textEditingControllerEmail.value.text =
-          loggedInUserModel.email!;
+      loggedInUserModel.email!;
 
       setState(() {});
     });
@@ -182,86 +127,80 @@ class _HomePageState extends State<HomePage>
   Animation? _animation;
   final storage = const FlutterSecureStorage();
 
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: Drawer(
-        // backgroundColor: kPrimaryLightColor,
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0),
-            child: Column(
-              children: [
-                const SizedBox(
-                  height: 200,
-                ),
-                menuItem(
-                  'Home',
-                  Icons.home,
-                  1,
-                  currentPage == drawerSection.home ? true : false,
-                )!,
-                menuItem(
-                  'Profile',
-                  Icons.person,
-                  2,
-                  currentPage == drawerSection.profile ? true : false,
-                )!,
-                menuItem(
-                  'Emergency',
-                  Icons.help,
-                  3,
-                  currentPage == drawerSection.emergency ? true : false,
-                )!,
-                Material(
-                  color: selected ? Colors.grey[300] : Colors.transparent,
-                  child: InkWell(
-                    onTap: () async {
-                      Navigator.pop(context);
-                      FirebaseAuth.instance.signOut();
-                      await storage.delete(key: 'uid');
-                      Get.off(WelcomeScreen());
-                    },
-                    child: Container(
-                      height: 40,
-                      child: Row(
-                        children: const [
-                          Expanded(
-                              child: Icon(
-                            Icons.logout,
-                            color: kPrimaryColor,
-                            size: 16,
-                          )),
-                          SizedBox(width: 30),
-                          Expanded(
-                            flex: 2,
-                            child: Text(
-                              'Logout',
-                              style: TextStyle(fontSize: 16),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                )
-              ],
-            ),
-          ),
-        ),
-      ),
+      // drawer: Drawer(
+      //   // backgroundColor: kPrimaryLightColor,
+      //   child: SafeArea(
+      //     child: Padding(
+      //       padding: const EdgeInsets.symmetric(horizontal: 10.0),
+      //       child: Column(
+      //         children: [
+      //           const SizedBox(
+      //             height: 200,
+      //           ),
+      //           menuItem(
+      //             'Home',
+      //             Icons.home,
+      //             1,
+      //             currentPage == drawerSection.home ? true : false,
+      //           )!,
+      //           menuItem(
+      //             'Profile',
+      //             Icons.person,
+      //             2,
+      //             currentPage == drawerSection.profile ? true : false,
+      //           )!,
+      //           menuItem(
+      //             'Emergency',
+      //             Icons.help,
+      //             3,
+      //             currentPage == drawerSection.emergency ? true : false,
+      //           )!,
+      //           Material(
+      //             color: selected ? Colors.grey[300] : Colors.transparent,
+      //             child: InkWell(
+      //               onTap: () async {
+      //                 Navigator.pop(context);
+      //                 FirebaseAuth.instance.signOut();
+      //                 await storage.delete(key: 'uid');
+      //                 Get.off(WelcomeScreen());
+      //               },
+      //               child: Container(
+      //                 height: 40,
+      //                 child: Row(
+      //                   children: const [
+      //                     Expanded(
+      //                         child: Icon(
+      //                           Icons.logout,
+      //                           color: kPrimaryColor,
+      //                           size: 16,
+      //                         )),
+      //                     SizedBox(width: 30),
+      //                     Expanded(
+      //                       flex: 2,
+      //                       child: Text(
+      //                         'Logout',
+      //                         style: TextStyle(fontSize: 16),
+      //                       ),
+      //                     )
+      //                   ],
+      //                 ),
+      //               ),
+      //             ),
+      //           )
+      //         ],
+      //       ),
+      //     ),
+      //   ),
+      // ),
       appBar: AppBar(
         backgroundColor: kPrimaryColor,
         // automaticallyImplyLeading: false,
         title: const Text('Fearless'),
-        titleSpacing: 0,
-        // actions: [
-        //   IconButton(onPressed: () async{
-        //     FirebaseAuth.instance.signOut();
-        //     await storage.delete(key: 'uid');
-        //     Get.off(WelcomeScreen());
-        //   }, icon: const Icon(Icons.logout))
-        // ],
       ),
       body: Column(
         children: [
@@ -287,9 +226,9 @@ class _HomePageState extends State<HomePage>
                 },
                 child: const Center(
                     child: Text(
-                  'Emergency',
-                  style: TextStyle(color: Colors.white),
-                )),
+                      'Emergency',
+                      style: TextStyle(color: Colors.white),
+                    )),
               ),
             ),
           ),
@@ -300,9 +239,10 @@ class _HomePageState extends State<HomePage>
             child: FirebaseAnimatedList(
               query: _databaseReference!,
               shrinkWrap: true,
-              itemBuilder: (BuildContext context,DataSnapshot snapshot,animation,index){
-                return  InkWell(
-                  onTap: (){
+              itemBuilder: (BuildContext context, DataSnapshot snapshot,
+                  animation, index) {
+                return InkWell(
+                  onTap: () {
                     Get.to(PostView(
                       firstName: (snapshot.value as dynamic)['firstname'],
                       date: (snapshot.value as dynamic)['date'],
@@ -313,18 +253,21 @@ class _HomePageState extends State<HomePage>
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: ListTile(
-                        title: Text((snapshot.value as dynamic)['firstname'] ?? '',style: TextStyle(
-                          fontSize: 16,color: Colors.black
+                        title: Text((snapshot.value as dynamic)['firstname'] ??
+                            '', style: TextStyle(
+                            fontSize: 16, color: Colors.black
                         ),),
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text((snapshot.value as dynamic)['story'] ?? '',style: TextStyle(
-                                fontSize: 12,color: Colors.grey[600]
-                            ),),
-                            Text((snapshot.value as dynamic)['date'],style: TextStyle(
-                                fontSize: 10,color: Colors.grey[400]
-                            ),),
+                            Text((snapshot.value as dynamic)['story'] ?? '',
+                              style: TextStyle(
+                                  fontSize: 12, color: Colors.grey[600]
+                              ),),
+                            Text((snapshot.value as dynamic)['date'],
+                              style: TextStyle(
+                                  fontSize: 10, color: Colors.grey[400]
+                              ),),
                           ],
                         ),
                       ),
@@ -401,14 +344,7 @@ class _HomePageState extends State<HomePage>
           // )
         ],
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: kPrimaryColor,
-        child: Icon(Icons.add),
-        onPressed: () {
-          Get.to(AddPost());
-        },
-      ),
+
     );
   }
 }

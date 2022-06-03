@@ -1,10 +1,12 @@
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:fearless/Screens/home/home_page.dart';
+import 'package:fearless/bottom_nav.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'Screens/Welcome/components/body.dart';
+import 'binding.dart';
 import 'constants.dart';
 
 Future<void> main() async {
@@ -29,6 +31,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Management System',
+      initialBinding: InitialBinding(),
       theme: ThemeData(
         primaryColor: kPrimaryColor,
         scaffoldBackgroundColor: Colors.white,
@@ -43,7 +46,7 @@ class MyApp extends StatelessWidget {
               if(snapshot.data == false){
                 return WelcomeScreen();
               }else{
-                return HomePage();
+                return BottomNav();
               }
               // if(snapshot.connectionState == ConnectionState.waiting){
               //   return const Center(child: CircularProgressIndicator(),);

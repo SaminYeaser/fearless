@@ -5,6 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
+import '../../bottom_nav.dart';
 import '../../components/already_have_an_account_acheck.dart';
 import '../../components/rounded_button.dart';
 import '../../constants.dart';
@@ -195,7 +196,7 @@ class _LoginScreenState extends State<LoginScreen> {
       try{
         UserCredential userCredential = await auth.signInWithEmailAndPassword(email: email, password: password);
         await storage.write(key: 'uid', value: userCredential.user?.uid);
-        Get.offAll(const HomePage());
+        Get.offAll(const BottomNav());
       } on FirebaseAuthException catch(e){
         // print(e.code);
         //   if(e.code == 'user-not-found'){

@@ -14,7 +14,6 @@ class Profile extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: kPrimaryColor,
-        titleSpacing: 0,
         title: Text('Profile'),
       ),
       body: SingleChildScrollView(
