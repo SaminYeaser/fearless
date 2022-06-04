@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:fearless/model/article.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +15,7 @@ class LoginController extends GetxController{
   final articleController = TextEditingController().obs;
   final textEditingControllerSecondName = TextEditingController().obs;
   Rx articles = ArticlesModel().obs;
+  final image = Rxn<File>();
   Rx<DatabaseReference> databaseReference = FirebaseDatabase.instance.ref().child('articles').obs;
 
   @override

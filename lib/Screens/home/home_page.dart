@@ -26,59 +26,10 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
 
-  // Widget? menuItem(String name,
-  //     IconData icon,
-  //     int id,
-  //     bool selected,) {
-  //   return Material(
-  //     color: selected ? Colors.grey[300] : Colors.transparent,
-  //     child: InkWell(
-  //       onTap: () {
-  //         Navigator.pop(context);
-  //         setState(() {
-  //           if (id == 1) {
-  //             currentPage = drawerSection.home;
-  //             Get.to(HomePage(), transition: Transition.fade);
-  //           } else if (id == 2) {
-  //             currentPage = drawerSection.profile;
-  //             Get.to(Profile(), transition: Transition.fade);
-  //           } else if (id == 3) {
-  //             currentPage = drawerSection.emergency;
-  //           }
-  //         });
-  //       },
-  //       child: Container(
-  //         height: 40,
-  //         child: Row(
-  //           children: [
-  //             Expanded(
-  //                 child: Icon(
-  //                   icon,
-  //                   color: kPrimaryColor,
-  //                   size: 16,
-  //                 )),
-  //             const SizedBox(width: 30),
-  //             Expanded(
-  //               flex: 2,
-  //               child: Text(
-  //                 name,
-  //                 style: const TextStyle(fontSize: 16),
-  //               ),
-  //             )
-  //           ],
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
 
-  // var currentPage = drawerSection.home;
   User? user = FirebaseAuth.instance.currentUser;
   UserModel loggedInUserModel = UserModel();
 
-  // DatabaseReference? _databaseReference;
-
-  // Articles? data;
   String? database;
   bool selected = false;
   LoginController _loginController = Get.put(LoginController());
