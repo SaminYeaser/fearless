@@ -187,6 +187,7 @@ class _ProfileState extends State<Profile> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: kPrimaryColor,
         title: Text('Profile'),
       ),
@@ -219,7 +220,8 @@ class _ProfileState extends State<Profile> {
                       ),),
                     ) : InkWell(
                       onTap: () {
-                        uploadFile();
+                        Fluttertoast.showToast(msg: 'Premium feature');
+                        // uploadFile();
                       },
                       child: Container(
                         decoration: BoxDecoration(
@@ -391,7 +393,7 @@ class _ProfileState extends State<Profile> {
                   shrinkWrap: true,
                   itemBuilder: (BuildContext context, DataSnapshot snapshot,
                       animation, index) {
-                    return InkWell(
+                    return snapshot.value != null ? InkWell(
                       onTap: () {
                         Get.to(PostView(
                           firstName: (snapshot.value as dynamic)['firstname'],
@@ -487,6 +489,8 @@ class _ProfileState extends State<Profile> {
                               ),
                             )
                           : Container(),
+                    ): Center(
+                      child: Text('No Article for this user'),
                     );
                     // Text((snapshot.value as dynamic)['story'])
                   },

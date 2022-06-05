@@ -28,7 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formkey = GlobalKey<FormState>();
 
 
-
+  int flagPassword = 0;
   final auth = FirebaseAuth.instance;
   final storage = FlutterSecureStorage();
 
@@ -136,10 +136,25 @@ class _LoginScreenState extends State<LoginScreen> {
                       controller: _loginController.textEditingControllerPassword.value,
                       onChanged: (value) {},
                       cursorColor: kPrimaryColor,
-                      obscureText: true,
+                      obscureText: flagPassword == 0? true : false,
                       decoration: InputDecoration(
                         prefixIcon: const Icon(Icons.lock, color: kPrimaryColor,),
+                          suffixIcon: flagPassword == 0 ?
+                          IconButton(
+                            onPressed: (){
+                              setState(() {
+                                flagPassword = 1;
+                              });
 
+                            },
+                            icon: Icon(Icons.visibility),color: kPrimaryColor,) :
+                          IconButton(
+                            onPressed: (){
+                              setState(() {
+                                flagPassword = 0;
+                              });
+                            },
+                            icon: Icon(Icons.visibility_off),color: kPrimaryColor,),
                           fillColor: kPrimaryLightColor,
                           filled: true,
                           hintText: 'Password',

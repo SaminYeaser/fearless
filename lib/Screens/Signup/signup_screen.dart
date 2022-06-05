@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import '../../bottom_nav.dart';
 import '../../components/already_have_an_account_acheck.dart';
 import '../../components/rounded_button.dart';
 import '../../components/rounded_input_field.dart';
@@ -26,6 +27,8 @@ class SignUpScreen extends StatelessWidget {
   final TextEditingController _confirmPasswordTextEditingController = TextEditingController();
   final _formkey = GlobalKey<FormState>();
   final _auth = FirebaseAuth.instance;
+  RxInt passwordObsecure = 0.obs;
+  RxInt confirmPasswordObsecure = 0.obs;
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -130,7 +133,7 @@ class SignUpScreen extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(6.0))),
                       ),
                       SizedBox(height: 10),
-                      TextFormField(
+                      Obx(()=>TextFormField(
                         validator: (value){
                           RegExp regex =  RegExp(r'^.{8,}$');
                           if(value!.isEmpty){
@@ -142,12 +145,24 @@ class SignUpScreen extends StatelessWidget {
                         },
                         controller: _passwordTextEditingController,
                         keyboardType: TextInputType.emailAddress,
-                        obscureText: true,
+                        obscureText: passwordObsecure.value == 0 ? true : false,
                         onChanged: (value) {},
                         cursorColor: kPrimaryColor,
                         decoration: InputDecoration(
                             prefixIcon: const Icon(Icons.lock, color: kPrimaryColor,),
-                            suffixIcon: const Icon(Icons.visibility,color: kPrimaryColor,),
+                            suffixIcon: passwordObsecure.value == 0 ?  IconButton(
+                              onPressed: (){
+                                passwordObsecure.value = 1;
+                              },
+                              icon: Icon(Icons.visibility),
+                              color: kPrimaryColor,
+                            ) : IconButton(
+                              onPressed: (){
+                                passwordObsecure.value = 0;
+                              },
+                              icon: Icon(Icons.visibility_off),
+                              color: kPrimaryColor,
+                            ),
                             fillColor: kPrimaryLightColor,
                             filled: true,
                             hintText: 'Password',
@@ -157,9 +172,9 @@ class SignUpScreen extends StatelessWidget {
                             focusedBorder: OutlineInputBorder(
                                 borderSide: BorderSide.none,
                                 borderRadius: BorderRadius.circular(6.0))),
-                      ),
+                      ),),
                       SizedBox(height: 10),
-                      TextFormField(
+                      Obx(()=>TextFormField(
                         validator: (value){
                           if(_passwordTextEditingController.text != _confirmPasswordTextEditingController.text){
                             return 'Password don\'t match';
@@ -168,12 +183,22 @@ class SignUpScreen extends StatelessWidget {
                         },
                         controller: _confirmPasswordTextEditingController,
                         keyboardType: TextInputType.emailAddress,
-                        obscureText: true,
+                        obscureText: confirmPasswordObsecure.value == 0 ? true : false,
                         onChanged: (value) {},
                         cursorColor: kPrimaryColor,
                         decoration: InputDecoration(
                             prefixIcon: const Icon(Icons.lock, color: kPrimaryColor,),
-                            suffixIcon: const Icon(Icons.visibility,color: kPrimaryColor,),
+                            suffixIcon: confirmPasswordObsecure.value == 0 ?
+                            IconButton(
+                              onPressed: (){
+                                confirmPasswordObsecure.value = 1;
+                              },
+                              icon: Icon(Icons.visibility),color: kPrimaryColor,) :
+                            IconButton(
+                              onPressed: (){
+                                confirmPasswordObsecure.value = 0;
+                              },
+                              icon: Icon(Icons.visibility_off),color: kPrimaryColor,),
                             fillColor: kPrimaryLightColor,
                             filled: true,
                             hintText: 'Confirm Password',
@@ -183,7 +208,7 @@ class SignUpScreen extends StatelessWidget {
                             focusedBorder: OutlineInputBorder(
                                 borderSide: BorderSide.none,
                                 borderRadius: BorderRadius.circular(6.0))),
-                      ),
+                      )),
                       RoundedButton(
                         text: "SIGNUP",
                         press: () {
@@ -278,6 +303,6 @@ class SignUpScreen extends StatelessWidget {
     Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-            builder: (BuildContext context) => new HomePage()));
+            builder: (BuildContext context) => new BottomNav()));
   }
 }

@@ -1,3 +1,4 @@
+import 'package:fearless/controllers/login/login_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -30,6 +31,7 @@ class _BottomNavState extends State<BottomNav> {
   Widget currentScreen = HomePage();
   int currentTab = 0;
   final storage = const FlutterSecureStorage();
+  LoginController _loginController = Get.find();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -129,6 +131,8 @@ class _BottomNavState extends State<BottomNav> {
                             Navigator.pop(context);
                             FirebaseAuth.instance.signOut();
                             await storage.delete(key: 'uid');
+                            _loginController.image.value = null;
+                            _loginController.textEditingControllerPassword.value.clear();
                             Get.off(WelcomeScreen());
                           }, child: Text('Yes'),
                         ),

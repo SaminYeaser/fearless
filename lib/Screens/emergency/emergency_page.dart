@@ -132,6 +132,7 @@ class _EmergencyState extends State<Emergency> with SingleTickerProviderStateMix
     return Scaffold(
       backgroundColor: animation == null ? Colors.white : animation!.value,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Text('Emergency', style: TextStyle(
           color: Colors.white
         ),),
